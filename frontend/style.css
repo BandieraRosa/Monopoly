@@ -181,6 +181,16 @@ main {
     color: #2d3748;
 }
 
+.jail-indicator {
+    color: #e53e3e;
+    font-weight: bold;
+    background: #fed7d7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    border: 1px solid #fc8181;
+}
+
 .player-money {
     color: #38a169;
     font-size: 0.9rem;
@@ -188,6 +198,110 @@ main {
 
 .player-position {
     color: #666;
+    font-size: 0.8rem;
+}
+
+/* 地产列表样式 */
+.player-properties {
+    margin-top: 8px;
+}
+
+.properties-header {
+    font-weight: bold;
+    color: #4a5568;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.properties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    background: #f7fafc;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.8rem;
+}
+
+.property-item.mortgaged {
+    background: #fed7d7;
+    border-color: #fc8181;
+}
+
+.property-buttons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.level-status {
+    color: #38a169;
+    font-weight: bold;
+    background: #c6f6d5;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    margin-left: 4px;
+}
+
+.property-name {
+    flex: 1;
+    color: #2d3748;
+}
+
+.mortgage-status {
+    color: #e53e3e;
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.property-btn {
+    padding: 2px 8px;
+    border: none;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+}
+
+.mortgage-btn {
+    background: #4299e1;
+    color: white;
+}
+
+.mortgage-btn:hover {
+    background: #3182ce;
+}
+
+.redeem-btn {
+    background: #48bb78;
+    color: white;
+}
+
+.redeem-btn:hover {
+    background: #38a169;
+}
+
+.upgrade-btn {
+    background: #bee3f8;
+    color: #2a4365;
+}
+
+.upgrade-btn:hover {
+    background: #90cdf4;
+}
+
+.no-properties {
+    color: #a0aec0;
+    font-style: italic;
     font-size: 0.8rem;
 }
 
@@ -474,4 +588,208 @@ button:disabled {
 
 .tile.owned-by-player4 .owner-label {
     background: #805ad5;
+}
+
+/* 抵押地产遮罩样式 */
+.tile.mortgaged::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(128, 128, 128, 0.6);
+    z-index: 10;
+    border-radius: 8px;
+}
+
+.tile.mortgaged .tile-name,
+.tile.mortgaged .tile-price {
+    position: relative;
+    z-index: 11;
+    color: #666;
+}
+
+.mortgage-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 8px;
+    font-weight: bold;
+    z-index: 12;
+    white-space: nowrap;
+}
+
+.level-indicator {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: rgba(56, 161, 105, 0.9);
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    z-index: 3;
+}
+
+/* 卡片模态框样式 */
+.card-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-modal.show {
+    opacity: 1;
+}
+
+.card-modal.fade-out {
+    opacity: 0;
+}
+
+.card-modal-content {
+    background: white;
+    border-radius: 15px;
+    padding: 0;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.card-modal.show .card-modal-content {
+    transform: scale(1);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.card-body p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+}
+
+/* 机会卡样式 */
+.card-modal.chance .card-header {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+/* 命运卡样式 */
+.card-modal.destiny .card-header {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+/* 债务模式样式 */
+.debt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.debt-modal-content {
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 3px solid #e53e3e;
+    animation: slideIn 0.3s ease-out;
+}
+
+.debt-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: pulse 2s infinite;
+}
+
+.debt-modal h2 {
+    color: #e53e3e;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.debt-modal p {
+    color: #4a5568;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.debt-actions {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fed7d7;
+    border-radius: 8px;
+    border-left: 4px solid #e53e3e;
+}
+
+.debt-actions p {
+    color: #742a2a;
+    font-weight: bold;
+    margin: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

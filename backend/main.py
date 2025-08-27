@@ -171,6 +171,30 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, player_id: str)
                 result = game_manager.end_turn()
                 response.update(result)
             
+            elif action == "mortgage_property":
+                property_id = message.get("property_id")
+                if property_id is not None:
+                    result = game_manager.mortgage_property(player_id, property_id)
+                    response.update(result)
+                else:
+                    response["message"] = "缺少地产ID参数"
+            
+            elif action == "redeem_property":
+                property_id = message.get("property_id")
+                if property_id is not None:
+                    result = game_manager.redeem_property(player_id, property_id)
+                    response.update(result)
+                else:
+                    response["message"] = "缺少地产ID参数"
+            
+            elif action == "upgrade_property":
+                property_id = message.get("property_id")
+                if property_id is not None:
+                    result = game_manager.upgrade_property(player_id, property_id)
+                    response.update(result)
+                else:
+                    response["message"] = "缺少地产ID参数"
+            
             else:
                 response["message"] = "未知操作"
             
