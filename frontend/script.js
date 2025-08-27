@@ -270,6 +270,9 @@ function render(state) {
     // 更新玩家位置
     renderPlayerPositions(state.players);
     
+    // 更新地块所有权显示
+    renderPropertyOwnership(state.players);
+    
     // 更新当前回合显示
     const currentPlayer = state.players[state.current_turn_player_id];
     elements.currentTurn.textContent = currentPlayer ? currentPlayer.name : '等待中...';
@@ -323,24 +326,58 @@ function renderPlayerPositions(players) {
     });
 }
 
+// 渲染地块所有权
+function renderPropertyOwnership(players) {
+    // 清除所有地块的所有权样式
+    document.querySelectorAll('.tile').forEach(tile => {
+        tile.classList.remove('owned-by-player1', 'owned-by-player2', 'owned-by-player3', 'owned-by-player4');
+        const ownerLabel = tile.querySelector('.owner-label');
+        if (ownerLabel) {
+            ownerLabel.remove();
+        }
+    });
+    
+    // 为每个玩家的地产添加所有权标识
+    Object.values(players).forEach((player, index) => {
+        const playerClass = `owned-by-player${(index % 4) + 1}`;
+        
+        player.properties.forEach(propertyPosition => {
+            const tileElement = document.getElementById(`tile-${propertyPosition}`);
+            if (tileElement) {
+                // 添加所有权CSS类
+                tileElement.classList.add(playerClass);
+                
+                // 添加玩家名字首字母标识
+                const ownerLabel = document.createElement('div');
+                ownerLabel.className = 'owner-label';
+                ownerLabel.textContent = player.name.charAt(0);
+                ownerLabel.title = `拥有者: ${player.name}`;
+                
+                tileElement.appendChild(ownerLabel);
+            }
+        });
+    });
+}
+
 // 更新按钮状态
 function updateButtonStates(isMyTurn) {
-    elements.rollDiceBtn.disabled = !isMyTurn;
-    elements.buyPropertyBtn.disabled = !isMyTurn;
-    elements.endTurnBtn.disabled = !isMyTurn;
-    
-    // 根据当前位置更新购买按钮
-    if (isMyTurn && gameState) {
-        const currentPlayer = gameState.players[playerId];
-        if (currentPlayer) {
-            const currentTile = GAME_MAP[currentPlayer.position];
-            const canBuy = currentTile.type === 'property' && 
-                          currentPlayer.money >= currentTile.price &&
-                          !isPropertyOwned(currentPlayer.position);
-            
-            elements.buyPropertyBtn.disabled = !canBuy;
-        }
+    if (!isMyTurn || !gameState) {
+        // 不是我的回合时，所有按钮都禁用
+        elements.rollDiceBtn.disabled = true;
+        elements.buyPropertyBtn.disabled = true;
+        elements.endTurnBtn.disabled = true;
+        return;
     }
+    
+    // 是我的回合时，根据游戏状态控制按钮
+    // 掷骰子按钮：只有在未掷骰子时才能点击
+    elements.rollDiceBtn.disabled = gameState.has_rolled_dice;
+    
+    // 购买地产按钮：根据后端返回的 can_buy_property 状态
+    elements.buyPropertyBtn.disabled = !gameState.can_buy_property;
+    
+    // 结束回合按钮：只有在回合完成时才能点击
+    elements.endTurnBtn.disabled = !gameState.turn_completed;
 }
 
 // 检查地产是否已被拥有

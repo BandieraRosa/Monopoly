@@ -168,9 +168,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, player_id: str)
                 response.update(result)
             
             elif action == "end_turn":
-                success = game_manager.end_turn()
-                response["success"] = success
-                response["message"] = "回合结束" if success else "结束回合失败"
+                result = game_manager.end_turn()
+                response.update(result)
             
             else:
                 response["message"] = "未知操作"
@@ -187,7 +186,10 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, player_id: str)
     
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        # 可以在这里添加玩家离开游戏的逻辑
+        # 从游戏中移除玩家并清空其地产
+        game_manager.remove_player(player_id)
+        
+        # 广播玩家离开消息
         await manager.broadcast_to_room(
             json.dumps({
                 "type": "player_disconnect",
@@ -196,6 +198,13 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, player_id: str)
             }),
             room_id
         )
+        
+        # 广播更新后的游戏状态
+        game_state_message = json.dumps({
+            "type": "game_state",
+            "data": game_manager.get_game_state().dict()
+        })
+        await manager.broadcast_to_room(game_state_message, room_id)
 
 @app.get("/")
 async def root():

@@ -418,3 +418,60 @@ button:disabled {
         gap: 5px;
     }
 }
+
+/* 地块所有权样式 */
+.tile.owned-by-player1 {
+    border: 3px solid #e53e3e !important;
+    box-shadow: 0 0 10px rgba(229, 62, 62, 0.5);
+}
+
+.tile.owned-by-player2 {
+    border: 3px solid #3182ce !important;
+    box-shadow: 0 0 10px rgba(49, 130, 206, 0.5);
+}
+
+.tile.owned-by-player3 {
+    border: 3px solid #38a169 !important;
+    box-shadow: 0 0 10px rgba(56, 161, 105, 0.5);
+}
+
+.tile.owned-by-player4 {
+    border: 3px solid #805ad5 !important;
+    box-shadow: 0 0 10px rgba(128, 90, 213, 0.5);
+}
+
+/* 所有者标签样式 */
+.owner-label {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2d3748;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    z-index: 15;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tile.owned-by-player1 .owner-label {
+    background: #e53e3e;
+}
+
+.tile.owned-by-player2 .owner-label {
+    background: #3182ce;
+}
+
+.tile.owned-by-player3 .owner-label {
+    background: #38a169;
+}
+
+.tile.owned-by-player4 .owner-label {
+    background: #805ad5;
+}
