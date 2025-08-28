@@ -44,12 +44,8 @@
     # 进入后端目录
     cd backend
     
-    # (推荐) 创建并激活虚拟环境
-    python -m venv venv
-    source venv/bin/activate  # on Windows, use `venv\Scripts\activate`
-    
-    # 安装依赖 (假设有 requirements.txt)
-    pip install fastapi "pydantic" "uvicorn[standard]"
+    # 安装依赖
+    pip install -r requirements.txt
     
     # 启动服务器
     uvicorn main:app --host 0.0.0.0 --port 8001 --reload
