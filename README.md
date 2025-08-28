@@ -35,8 +35,8 @@
 
 1.  **克隆仓库**
     ```bash
-    git clone [你的仓库URL]
-    cd [你的项目目录]
+    git clone https://github.com/BandieraRosa/Monopoly.git
+    cd Monopoly
     ```
 
 2.  **启动后端服务器**

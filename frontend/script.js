@@ -1,25 +1,25 @@
 // 游戏地图数据（与后端保持一致）
 const GAME_MAP = [
     {"id": 0, "name": "起点", "type": "start"},
-    {"id": 1, "name": "南京路", "type": "property", "price": 1000, "rent": [100, 300, 700], "mortgage_value": 500, "upgrade_cost": 500},
-    {"id": 2, "name": "厦门路", "type": "property", "price": 1200, "rent": [120, 360, 840], "mortgage_value": 600, "upgrade_cost": 600},
+    {"id": 1, "name": "高旺路", "type": "property", "price": 1000, "rent": [100, 300, 700], "mortgage_value": 500, "upgrade_cost": 500},
+    {"id": 2, "name": "竹湾路", "type": "property", "price": 1200, "rent": [120, 360, 840], "mortgage_value": 600, "upgrade_cost": 600},
     {"id": 3, "name": "机会", "type": "chance"},
-    {"id": 4, "name": "广州路", "type": "property", "price": 1500, "rent": [150, 450, 1050], "mortgage_value": 750, "upgrade_cost": 750},
-    {"id": 5, "name": "监狱/探监", "type": "jail"},
-    {"id": 6, "name": "深圳路", "type": "property", "price": 1800, "rent": [180, 540, 1260], "mortgage_value": 900, "upgrade_cost": 900},
-    {"id": 7, "name": "杭州路", "type": "property", "price": 2000, "rent": [200, 600, 1400], "mortgage_value": 1000, "upgrade_cost": 1000},
+    {"id": 4, "name": "红岭路", "type": "property", "price": 1500, "rent": [150, 450, 1050], "mortgage_value": 750, "upgrade_cost": 750},
+    {"id": 5, "name": "监狱", "type": "jail"},
+    {"id": 6, "name": "龙山路", "type": "property", "price": 1800, "rent": [180, 540, 1260], "mortgage_value": 900, "upgrade_cost": 900},
+    {"id": 7, "name": "三龙大道", "type": "property", "price": 2000, "rent": [200, 600, 1400], "mortgage_value": 1000, "upgrade_cost": 1000},
     {"id": 8, "name": "命运", "type": "destiny"},
-    {"id": 9, "name": "苏州路", "type": "property", "price": 2200, "rent": [220, 660, 1540], "mortgage_value": 1100, "upgrade_cost": 1100},
+    {"id": 9, "name": "工厂路", "type": "property", "price": 2200, "rent": [220, 660, 1540], "mortgage_value": 1100, "upgrade_cost": 1100},
     {"id": 10, "name": "免费停车", "type": "free_parking"},
-    {"id": 11, "name": "重庆路", "type": "property", "price": 2500, "rent": [250, 750, 1750], "mortgage_value": 1250, "upgrade_cost": 1250},
-    {"id": 12, "name": "成都路", "type": "property", "price": 2800, "rent": [280, 840, 1960], "mortgage_value": 1400, "upgrade_cost": 1400},
+    {"id": 11, "name": "富民路", "type": "property", "price": 2500, "rent": [250, 750, 1750], "mortgage_value": 1250, "upgrade_cost": 1250},
+    {"id": 12, "name": "大学路", "type": "property", "price": 2800, "rent": [280, 840, 1960], "mortgage_value": 1400, "upgrade_cost": 1400},
     {"id": 13, "name": "税收", "type": "tax"},
-    {"id": 14, "name": "武汉路", "type": "property", "price": 3000, "rent": [300, 900, 2100], "mortgage_value": 1500, "upgrade_cost": 1500},
+    {"id": 14, "name": "西江路", "type": "property", "price": 3000, "rent": [300, 900, 2100], "mortgage_value": 1500, "upgrade_cost": 1500},
     {"id": 15, "name": "前往监狱", "type": "go_to_jail"},
-    {"id": 16, "name": "长沙路", "type": "property", "price": 3200, "rent": [320, 960, 2240], "mortgage_value": 1600, "upgrade_cost": 1600},
-    {"id": 17, "name": "西安路", "type": "property", "price": 3500, "rent": [350, 1050, 2450], "mortgage_value": 1750, "upgrade_cost": 1750},
+    {"id": 16, "name": "文澜路", "type": "property", "price": 3200, "rent": [320, 960, 2240], "mortgage_value": 1600, "upgrade_cost": 1600},
+    {"id": 17, "name": "西堤路", "type": "property", "price": 3500, "rent": [350, 1050, 2450], "mortgage_value": 1750, "upgrade_cost": 1750},
     {"id": 18, "name": "机会", "type": "chance"},
-    {"id": 19, "name": "天津路", "type": "property", "price": 4000, "rent": [400, 1200, 2800], "mortgage_value": 2000, "upgrade_cost": 2000}
+    {"id": 19, "name": "新兴路", "type": "property", "price": 4000, "rent": [400, 1200, 2800], "mortgage_value": 2000, "upgrade_cost": 2000}
 ];
 
 // 地产颜色组常量（与后端保持一致）
