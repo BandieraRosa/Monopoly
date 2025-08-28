@@ -61,11 +61,11 @@ main {
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     gap: 2px;
     aspect-ratio: 1;
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
 }
 
@@ -124,6 +124,16 @@ main {
 
 .tile.destiny {
     background: linear-gradient(135deg, #d69e2e, #b7791f);
+    color: white;
+}
+
+.tile.go_to_jail {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+}
+
+.tile.free_parking {
+    background: linear-gradient(135deg, #38b2ac, #319795);
     color: white;
 }
 
@@ -738,6 +748,33 @@ button:disabled {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border: 3px solid #e53e3e;
     animation: slideIn 0.3s ease-out;
+    position: relative;
+}
+
+.debt-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.debt-modal-close:hover {
+    background: #f0f0f0;
+    color: #333;
+    transform: scale(1.1);
 }
 
 .debt-icon {

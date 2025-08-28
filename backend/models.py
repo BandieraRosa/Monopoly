@@ -13,7 +13,6 @@ class Player(BaseModel):
     name: str
     money: int = 15000  # 默认起始资金15000
     position: int = 0   # 默认位置在起点
-    properties: List[int] = []  # 拥有的地产列表
     is_in_jail: bool = False  # 是否在监狱中
     turns_in_jail: int = 0  # 在监狱中的回合数
 

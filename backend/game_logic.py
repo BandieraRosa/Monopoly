@@ -2,33 +2,36 @@ import random
 from models import Player, GameState, TileState
 from typing import Dict, List
 
-# 游戏地图常量 - 16个地块的4x4布局
+# 游戏地图常量 - 20个地块的5x4布局
 GAME_MAP = [
-    {"id": 0, "name": "起点", "type": "start", "price": 0},
-    {"id": 1, "name": "中山路", "type": "property", "price": 1000, "rent": [100, 300, 700], "mortgage_value": 500, "upgrade_cost": 500},
-    {"id": 2, "name": "建设路", "type": "property", "price": 1200, "rent": [120, 360, 840], "mortgage_value": 600, "upgrade_cost": 600},
+    {"id": 0, "name": "起点", "type": "start"},
+    {"id": 1, "name": "南京路", "type": "property", "price": 1000, "rent": [100, 300, 700], "mortgage_value": 500, "upgrade_cost": 500},
+    {"id": 2, "name": "厦门路", "type": "property", "price": 1200, "rent": [120, 360, 840], "mortgage_value": 600, "upgrade_cost": 600},
     {"id": 3, "name": "机会", "type": "chance"},
-    {"id": 4, "name": "解放路", "type": "property", "price": 1500, "rent": [150, 450, 1050], "mortgage_value": 750, "upgrade_cost": 750},
-    {"id": 5, "name": "人民路", "type": "property", "price": 1800, "rent": [180, 540, 1260], "mortgage_value": 900, "upgrade_cost": 900},
-    {"id": 6, "name": "命运", "type": "fate"},
-    {"id": 7, "name": "和平路", "type": "property", "price": 2000, "rent": [200, 600, 1400], "mortgage_value": 1000, "upgrade_cost": 1000},
-    {"id": 8, "name": "胜利路", "type": "property", "price": 2200, "rent": [220, 660, 1540], "mortgage_value": 1100, "upgrade_cost": 1100},
-    {"id": 9, "name": "监狱", "type": "jail"},
-    {"id": 10, "name": "光明路", "type": "property", "price": 2500, "rent": [250, 750, 1750], "mortgage_value": 1250, "upgrade_cost": 1250},
-    {"id": 11, "name": "幸福路", "type": "property", "price": 2800, "rent": [280, 840, 1960], "mortgage_value": 1400, "upgrade_cost": 1400},
-    {"id": 12, "name": "免费停车", "type": "free_parking"},
-    {"id": 13, "name": "繁华街", "type": "property", "price": 3000, "rent": [300, 900, 2100], "mortgage_value": 1500, "upgrade_cost": 1500},
-    {"id": 14, "name": "商业区", "type": "property", "price": 3500, "rent": [350, 1050, 2450], "mortgage_value": 1750, "upgrade_cost": 1750},
-    {"id": 15, "name": "税收", "type": "tax", "price": 0}
+    {"id": 4, "name": "广州路", "type": "property", "price": 1500, "rent": [150, 450, 1050], "mortgage_value": 750, "upgrade_cost": 750},
+    {"id": 5, "name": "监狱/探监", "type": "jail"},
+    {"id": 6, "name": "深圳路", "type": "property", "price": 1800, "rent": [180, 540, 1260], "mortgage_value": 900, "upgrade_cost": 900},
+    {"id": 7, "name": "杭州路", "type": "property", "price": 2000, "rent": [200, 600, 1400], "mortgage_value": 1000, "upgrade_cost": 1000},
+    {"id": 8, "name": "命运", "type": "destiny"},
+    {"id": 9, "name": "苏州路", "type": "property", "price": 2200, "rent": [220, 660, 1540], "mortgage_value": 1100, "upgrade_cost": 1100},
+    {"id": 10, "name": "免费停车", "type": "free_parking"},
+    {"id": 11, "name": "重庆路", "type": "property", "price": 2500, "rent": [250, 750, 1750], "mortgage_value": 1250, "upgrade_cost": 1250},
+    {"id": 12, "name": "成都路", "type": "property", "price": 2800, "rent": [280, 840, 1960], "mortgage_value": 1400, "upgrade_cost": 1400},
+    {"id": 13, "name": "税收", "type": "tax"},
+    {"id": 14, "name": "武汉路", "type": "property", "price": 3000, "rent": [300, 900, 2100], "mortgage_value": 1500, "upgrade_cost": 1500},
+    {"id": 15, "name": "前往监狱", "type": "go_to_jail"},
+    {"id": 16, "name": "长沙路", "type": "property", "price": 3200, "rent": [320, 960, 2240], "mortgage_value": 1600, "upgrade_cost": 1600},
+    {"id": 17, "name": "西安路", "type": "property", "price": 3500, "rent": [350, 1050, 2450], "mortgage_value": 1750, "upgrade_cost": 1750},
+    {"id": 18, "name": "机会", "type": "chance"},
+    {"id": 19, "name": "天津路", "type": "property", "price": 4000, "rent": [400, 1200, 2800], "mortgage_value": 2000, "upgrade_cost": 2000}
 ]
 
 # 地产颜色组常量 - 定义同一颜色组的地产ID
 PROPERTY_GROUPS = {
-    'group1': [1, 2],
-    'group2': [4, 5],
-    'group3': [7, 8],
-    'group4': [10, 11],
-    'group5': [13, 14]
+    'group1': [1, 2, 4],
+    'group2': [6, 7, 9],
+    'group3': [11, 12, 14],
+    'group4': [16, 17, 19]
 }
 
 # 机会卡片常量 - 偏向奖励
@@ -134,15 +137,9 @@ class GameManager:
         # 掷骰子（1-6）
         dice_roll = random.randint(1, 6)
         player = self.game_state.players[player_id]
-        old_position = player.position
         
-        # 移动玩家
-        player.position = (player.position + dice_roll) % 16
-        
-        # 检查是否经过起点
-        if player.position < old_position:
-            player.money += 2000  # 经过起点获得2000元
-            self.game_state.game_log.append(f"{player.name} 经过起点，获得2000元")
+        # 使用统一的移动方法
+        self._move_player(player_id, dice_roll)
         
         current_tile = GAME_MAP[player.position]
         self.game_state.game_log.append(
@@ -192,7 +189,6 @@ class GameManager:
         
         # 购买地产
         player.money -= current_tile["price"]
-        player.properties.append(player.position)  # 保留原有逻辑用于兼容性
         
         # 在tile_states中记录所有权
         self.game_state.tile_states[str(player.position)].owner_id = player_id
@@ -240,88 +236,127 @@ class GameManager:
         
         return {"success": True, "message": "回合已结束"}
     
+    def _move_player(self, player_id: str, steps: int):
+        """移动玩家并处理起点奖励（私有方法）"""
+        if player_id not in self.game_state.players:
+            return
+        
+        player = self.game_state.players[player_id]
+        old_position = player.position
+        
+        # 计算新位置
+        new_position = (old_position + steps) % len(GAME_MAP)
+        
+        # 更新玩家位置
+        player.position = new_position
+        
+        # 检查是否经过起点（只有前进时才给奖励）
+        if steps > 0 and new_position < old_position:
+            player.money += 2000
+            self.game_state.game_log.append(f"{player.name} 经过起点，获得2000元")
+    
     def _handle_landing(self, player_id: str):
         """处理玩家落地事件（私有方法）"""
         if player_id not in self.game_state.players:
             return
         
-        player = self.game_state.players[player_id]
-        current_tile = GAME_MAP[player.position]
-        
-        # 处理机会卡
-        if current_tile["type"] == "chance":
-            card = random.choice(CHANCE_CARDS)
-            self._apply_card_effect(player_id, card)
-            return
-        
-        # 处理命运卡
-        if current_tile["type"] == "destiny":
-            card = random.choice(DESTINY_CARDS)
-            self._apply_card_effect(player_id, card)
-            return
-        
-        # 处理监狱地块
-        if current_tile["type"] == "jail":
-            player.is_in_jail = True
-            player.turns_in_jail = 0
-            self.game_state.game_log.append(f"{player.name} 被关进了监狱")
-            return
+        processing = True
+        while processing:
+            processing = False  # 假设本轮循环后结束
+            player = self.game_state.players[player_id]
+            current_tile = GAME_MAP[player.position]
+            
+            # 处理机会卡
+            if current_tile["type"] == "chance":
+                card = random.choice(CHANCE_CARDS)
+                moved = self._apply_card_effect(player_id, card)
+                # 如果卡片效果导致了位置移动，设置标志，让 while 循环再执行一次
+                if moved:
+                    processing = True
+                continue
+            
+            # 处理命运卡
+            if current_tile["type"] == "destiny":
+                card = random.choice(DESTINY_CARDS)
+                moved = self._apply_card_effect(player_id, card)
+                # 如果卡片效果导致了位置移动，设置标志，让 while 循环再执行一次
+                if moved:
+                    processing = True
+                continue
+            
+            # 处理监狱地块（安全探监）
+            if current_tile["type"] == "jail":
+                self.game_state.game_log.append(f"{player.name} 路过了监狱")
+                continue
+            
+            # 处理前往监狱地块
+            elif current_tile["type"] == "go_to_jail":
+                player.position = 5  # 这是新地图上监狱的ID
+                player.is_in_jail = True
+                player.turns_in_jail = 0
+                self.game_state.game_log.append(f"{player.name} 被送进了监狱！")
+                # 因为这里是传送，所以直接 continue 跳出 while 循环的当前迭代
+                continue
 
-        # 处理税收地块
-        if current_tile["type"] == "tax":
-            tax_amount = 2000  # 固定税收金额2000元
-            player.money -= tax_amount
-            self.game_state.game_log.append(f"{player.name} 缴纳了 {tax_amount} 元税收")
-            # 检查债务状态
-            self._handle_debt(player_id)
-            return
+            # 处理税收地块
+            if current_tile["type"] == "tax":
+                tax_amount = 2000  # 固定税收金额2000元
+                player.money -= tax_amount
+                self.game_state.game_log.append(f"{player.name} 缴纳了 {tax_amount} 元税收")
+                # 检查债务状态
+                self._handle_debt(player_id)
+                continue
 
-        # 只处理地产类型的地块
-        if current_tile["type"] != "property":
-            return
-        
-        # 从tile_states中获取地产所有者
-        tile_state = self.game_state.tile_states[str(player.position)]
-        property_owner = None
-        
-        if tile_state.owner_id and tile_state.owner_id != player_id:
-            property_owner = self.game_state.players.get(tile_state.owner_id)
-        
-        # 如果地产有所有者且不是当前玩家
-        if property_owner:
-            # 检查地产是否被抵押
-            if tile_state.mortgaged:
+            # 只处理地产类型的地块
+            if current_tile["type"] != "property":
+                continue
+            
+            # 从tile_states中获取地产所有者
+            tile_state = self.game_state.tile_states[str(player.position)]
+            property_owner = None
+            
+            if tile_state.owner_id and tile_state.owner_id != player_id:
+                property_owner = self.game_state.players.get(tile_state.owner_id)
+            
+            # 如果地产有所有者且不是当前玩家
+            if property_owner:
+                # 检查地产是否被抵押
+                if tile_state.mortgaged:
+                    self.game_state.game_log.append(
+                        f"{current_tile['name']} 已被抵押，无需支付租金"
+                    )
+                    continue
+                
+                # 根据地产等级计算租金
+                rent_list = current_tile.get("rent", [0])
+                if isinstance(rent_list, list):
+                    # 确保等级不超出租金列表范围
+                    level = min(tile_state.level, len(rent_list) - 1)
+                    rent = rent_list[level]
+                else:
+                    # 兼容旧的单一租金格式
+                    rent = rent_list
+                
+                # 强制扣除租金，即使资金不足
+                player.money -= rent
+                property_owner.money += rent
+                
+                level_text = f"（等级{tile_state.level}）" if tile_state.level > 0 else ""
                 self.game_state.game_log.append(
-                    f"{current_tile['name']} 已被抵押，无需支付租金"
+                    f"{player.name} 向 {property_owner.name} 支付了 {rent} 元租金（{current_tile['name']}{level_text}）"
                 )
-                return
-            
-            # 根据地产等级计算租金
-            rent_list = current_tile.get("rent", [0])
-            if isinstance(rent_list, list):
-                # 确保等级不超出租金列表范围
-                level = min(tile_state.level, len(rent_list) - 1)
-                rent = rent_list[level]
-            else:
-                # 兼容旧的单一租金格式
-                rent = rent_list
-            
-            # 强制扣除租金，即使资金不足
-            player.money -= rent
-            property_owner.money += rent
-            
-            level_text = f"（等级{tile_state.level}）" if tile_state.level > 0 else ""
-            self.game_state.game_log.append(
-                f"{player.name} 向 {property_owner.name} 支付了 {rent} 元租金（{current_tile['name']}{level_text}）"
-            )
-            
-            # 检查债务状态
-            self._handle_debt(player_id)
+                
+                # 检查债务状态
+                self._handle_debt(player_id)
     
-    def _apply_card_effect(self, player_id: str, card: Dict):
-        """应用卡片效果（私有方法）"""
+    def _apply_card_effect(self, player_id: str, card: Dict) -> bool:
+        """应用卡片效果（私有方法）
+        
+        Returns:
+            bool: 如果卡片效果导致了玩家位置移动，则返回 True，否则返回 False
+        """
         if player_id not in self.game_state.players:
-            return
+            return False
         
         player = self.game_state.players[player_id]
         
@@ -333,39 +368,45 @@ class GameManager:
             player.money += card['value']
             # 检查债务状态
             self._handle_debt(player_id)
+            return False
         
         elif card['type'] == 'move_to':
             old_position = player.position
-            player.position = card['value']
+            target_position = card['value']
+            
+            # 计算到达目标位置需要前进的步数
+            if target_position >= old_position:
+                steps = target_position - old_position
+            else:
+                # 需要绕一圈到达目标位置
+                steps = len(GAME_MAP) - old_position + target_position
+            
+            # 使用统一的移动方法，确保正确触发起点奖励
+            self._move_player(player_id, steps)
+            
             self.game_state.game_log.append(
                 f"{player.name} 从位置 {old_position} 移动到位置 {player.position}"
             )
-            # 如果移动到起点或经过起点，给予奖励
-            if card['value'] == 0:
-                player.money += 2000
-                self.game_state.game_log.append(f"{player.name} 到达起点，获得2000元奖励")
+            return True
         
         elif card['type'] == 'move_forward':
             old_position = player.position
-            player.position = (player.position + card['value']) % len(GAME_MAP)
+            self._move_player(player_id, card['value'])
             self.game_state.game_log.append(
                 f"{player.name} 从位置 {old_position} 前进 {card['value']} 格到位置 {player.position}"
             )
-            # 检查是否经过起点
-            if old_position + card['value'] >= len(GAME_MAP):
-                player.money += 2000
-                self.game_state.game_log.append(f"{player.name} 经过起点，获得2000元奖励")
+            return True
         
         elif card['type'] == 'move_backward':
             old_position = player.position
-            player.position = (player.position - card['value']) % len(GAME_MAP)
+            # 后退的步数是负数
+            self._move_player(player_id, -card['value'])
             self.game_state.game_log.append(
                 f"{player.name} 从位置 {old_position} 后退 {card['value']} 格到位置 {player.position}"
             )
+            return True
         
-        # 移动后处理新位置的落地事件
-        if card['type'] in ['move_to', 'move_forward', 'move_backward']:
-            self._handle_landing(player_id)
+        return False
     
     def remove_player(self, player_id: str):
         """删除玩家并清空其地产归属"""
@@ -373,14 +414,13 @@ class GameManager:
             return
         
         player_name = self.game_state.players[player_id].name
-        player = self.game_state.players[player_id]
         
         # 清空该玩家所有地产的状态
-        for property_id in player.properties:
-            tile_state = self.game_state.tile_states[str(property_id)]
-            tile_state.owner_id = ""
-            tile_state.mortgaged = False
-            tile_state.level = 0
+        for tile_id, tile_state in self.game_state.tile_states.items():
+            if tile_state.owner_id == player_id:
+                tile_state.owner_id = ""
+                tile_state.mortgaged = False
+                tile_state.level = 0
         
         # 从玩家字典中删除该玩家
         del self.game_state.players[player_id]
@@ -421,8 +461,8 @@ class GameManager:
     
     def _check_turn_completion(self):
         """检查回合是否完成（私有方法）"""
-        # 如果已掷骰子且不能购买地产，则回合完成
-        if self.game_state.has_rolled_dice and not self.game_state.can_buy_property:
+        # 只要掷过骰子，就允许结束回合
+        if self.game_state.has_rolled_dice:
             self.game_state.turn_completed = True
     
     def mortgage_property(self, player_id: str, property_id: int) -> Dict:
@@ -542,7 +582,8 @@ class GameManager:
             return {"success": False, "message": "该地块不是地产"}
         
         # 检查玩家是否拥有该地产
-        if property_id not in player.properties:
+        tile_state = self.game_state.tile_states[str(property_id)]
+        if tile_state.owner_id != player_id:
             return {"success": False, "message": "你不拥有这个地产"}
         
         # 检查玩家是否拥有该地产所属颜色组的全部地产
@@ -604,9 +645,8 @@ class GameManager:
         if player.money < 0:
             # 检查玩家是否还有未抵押的地产
             has_unmortgaged_properties = False
-            for property_id in player.properties:
-                tile_state = self.game_state.tile_states[str(property_id)]
-                if not tile_state.mortgaged:
+            for tile_id, tile_state in self.game_state.tile_states.items():
+                if tile_state.owner_id == player_id and not tile_state.mortgaged:
                     has_unmortgaged_properties = True
                     break
             

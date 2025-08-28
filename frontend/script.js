@@ -1,30 +1,33 @@
 // 游戏地图数据（与后端保持一致）
 const GAME_MAP = [
-    {"id": 0, "name": "起点", "type": "start", "price": 0},
-    {"id": 1, "name": "中山路", "type": "property", "price": 1000, "mortgage_value": 500},
-    {"id": 2, "name": "建设路", "type": "property", "price": 1200, "mortgage_value": 600},
-    {"id": 3, "name": "机会", "type": "chance", "price": 0},
-    {"id": 4, "name": "解放路", "type": "property", "price": 1500, "mortgage_value": 750},
-    {"id": 5, "name": "人民路", "type": "property", "price": 1800, "mortgage_value": 900},
-    {"id": 6, "name": "监狱", "type": "jail", "price": 0},
-    {"id": 7, "name": "和平路", "type": "property", "price": 2000, "mortgage_value": 1000},
-    {"id": 8, "name": "胜利路", "type": "property", "price": 2200, "mortgage_value": 1100},
-    {"id": 9, "name": "命运", "type": "destiny", "price": 0},
-    {"id": 10, "name": "光明路", "type": "property", "price": 2500, "mortgage_value": 1250},
-    {"id": 11, "name": "幸福路", "type": "property", "price": 2800, "mortgage_value": 1400},
-    {"id": 12, "name": "停车场", "type": "parking", "price": 0},
-    {"id": 13, "name": "繁华街", "type": "property", "price": 3000, "mortgage_value": 1500},
-    {"id": 14, "name": "商业区", "type": "property", "price": 3500, "mortgage_value": 1750},
-    {"id": 15, "name": "税收", "type": "tax", "price": 0}
+    {"id": 0, "name": "起点", "type": "start"},
+    {"id": 1, "name": "南京路", "type": "property", "price": 1000, "rent": [100, 300, 700], "mortgage_value": 500, "upgrade_cost": 500},
+    {"id": 2, "name": "厦门路", "type": "property", "price": 1200, "rent": [120, 360, 840], "mortgage_value": 600, "upgrade_cost": 600},
+    {"id": 3, "name": "机会", "type": "chance"},
+    {"id": 4, "name": "广州路", "type": "property", "price": 1500, "rent": [150, 450, 1050], "mortgage_value": 750, "upgrade_cost": 750},
+    {"id": 5, "name": "监狱/探监", "type": "jail"},
+    {"id": 6, "name": "深圳路", "type": "property", "price": 1800, "rent": [180, 540, 1260], "mortgage_value": 900, "upgrade_cost": 900},
+    {"id": 7, "name": "杭州路", "type": "property", "price": 2000, "rent": [200, 600, 1400], "mortgage_value": 1000, "upgrade_cost": 1000},
+    {"id": 8, "name": "命运", "type": "destiny"},
+    {"id": 9, "name": "苏州路", "type": "property", "price": 2200, "rent": [220, 660, 1540], "mortgage_value": 1100, "upgrade_cost": 1100},
+    {"id": 10, "name": "免费停车", "type": "free_parking"},
+    {"id": 11, "name": "重庆路", "type": "property", "price": 2500, "rent": [250, 750, 1750], "mortgage_value": 1250, "upgrade_cost": 1250},
+    {"id": 12, "name": "成都路", "type": "property", "price": 2800, "rent": [280, 840, 1960], "mortgage_value": 1400, "upgrade_cost": 1400},
+    {"id": 13, "name": "税收", "type": "tax"},
+    {"id": 14, "name": "武汉路", "type": "property", "price": 3000, "rent": [300, 900, 2100], "mortgage_value": 1500, "upgrade_cost": 1500},
+    {"id": 15, "name": "前往监狱", "type": "go_to_jail"},
+    {"id": 16, "name": "长沙路", "type": "property", "price": 3200, "rent": [320, 960, 2240], "mortgage_value": 1600, "upgrade_cost": 1600},
+    {"id": 17, "name": "西安路", "type": "property", "price": 3500, "rent": [350, 1050, 2450], "mortgage_value": 1750, "upgrade_cost": 1750},
+    {"id": 18, "name": "机会", "type": "chance"},
+    {"id": 19, "name": "天津路", "type": "property", "price": 4000, "rent": [400, 1200, 2800], "mortgage_value": 2000, "upgrade_cost": 2000}
 ];
 
 // 地产颜色组常量（与后端保持一致）
 const PROPERTY_GROUPS = {
-    'group1': [1, 2],
-    'group2': [4, 5],
-    'group3': [7, 8],
-    'group4': [10, 11],
-    'group5': [13, 14]
+    'group1': [1, 2, 4],
+    'group2': [6, 7, 9],
+    'group3': [11, 12, 14],
+    'group4': [16, 17, 19]
 };
 
 // 全局变量
@@ -33,6 +36,7 @@ let roomId = null;
 let playerId = null;
 let playerName = null;
 let gameState = null;
+let lastShownCardLog = null; // 记录上次显示的卡片日志，避免重复显示
 
 // DOM元素
 const elements = {
@@ -71,10 +75,15 @@ function initGame() {
 function createGameBoard() {
     elements.gameBoard.innerHTML = '';
     
+    // 创建20个地块的环形布局
+    // 布局：上边6个，右边4个，下边6个，左边4个
+    const positions = getCircularPositions();
+    
     GAME_MAP.forEach((tile, index) => {
         const tileElement = document.createElement('div');
         tileElement.className = `tile ${tile.type}`;
         tileElement.id = `tile-${index}`;
+        tileElement.style.gridArea = positions[index];
         
         tileElement.innerHTML = `
             <div class="tile-name">${tile.name}</div>
@@ -83,6 +92,36 @@ function createGameBoard() {
         
         elements.gameBoard.appendChild(tileElement);
     });
+}
+
+// 获取环形布局的位置信息
+function getCircularPositions() {
+    const positions = [];
+    
+    // 地块0：左上角起点
+    positions[0] = '1 / 1';
+    
+    // 地块1-5：上边（从左到右）
+    for (let i = 1; i <= 5; i++) {
+        positions[i] = `1 / ${i + 1}`;
+    }
+    
+    // 地块6-9：右边（从上到下）
+    for (let i = 6; i <= 9; i++) {
+        positions[i] = `${i - 4} / 6`;
+    }
+    
+    // 地块10-14：下边（从右到左）
+    for (let i = 10; i <= 14; i++) {
+        positions[i] = `6 / ${16 - i}`;
+    }
+    
+    // 地块15-19：左边（从下到上）
+    for (let i = 15; i <= 19; i++) {
+        positions[i] = `${21 - i} / 1`;
+    }
+    
+    return positions;
 }
 
 // 绑定事件监听器
@@ -324,39 +363,49 @@ function renderPlayers(players, currentTurnPlayerId) {
         
         // 创建地产列表HTML
         let propertiesHtml = '';
-        if (player.properties.length > 0) {
-            propertiesHtml = '<div class="properties-list">';
-            player.properties.forEach(propertyId => {
-                const property = GAME_MAP[propertyId];
-                // 从gameState.tile_states获取抵押状态和等级
-                const tileState = gameState && gameState.tile_states ? gameState.tile_states[propertyId.toString()] : null;
-                const isMortgaged = tileState ? tileState.mortgaged : false;
-                const level = tileState ? tileState.level : 0;
-                const mortgageStatus = isMortgaged ? ' <span class="mortgage-status">(已抵押)</span>' : '';
-                const levelStatus = level > 0 ? ` <span class="level-status">Lv.${level}</span>` : '';
-                
-                propertiesHtml += `
-                    <div class="property-item ${isMortgaged ? 'mortgaged' : ''}">
-                        <span class="property-name">${property.name}${mortgageStatus}${levelStatus}</span>
-                        ${player.id === playerId ? `
-                            <div class="property-buttons">
-                                <button class="property-btn ${isMortgaged ? 'redeem-btn' : 'mortgage-btn'}" 
-                                        onclick="handlePropertyAction('${isMortgaged ? 'redeem' : 'mortgage'}', ${propertyId})">
-                                    ${isMortgaged ? '赎回' : '抵押'}
+        let hasProperties = false;
+        
+        // 遍历所有地块，找到属于当前玩家的地产
+        propertiesHtml = '<div class="properties-list">';
+        for (let propertyId = 0; propertyId < GAME_MAP.length; propertyId++) {
+            const property = GAME_MAP[propertyId];
+            
+            // 只处理地产类型的地块
+            if (property.type !== 'property') continue;
+            
+            // 检查该地产是否属于当前玩家
+            const tileState = gameState && gameState.tile_states ? gameState.tile_states[propertyId.toString()] : null;
+            if (!tileState || tileState.owner_id !== player.id) continue;
+            
+            hasProperties = true;
+            const isMortgaged = tileState.mortgaged;
+            const level = tileState.level;
+            const mortgageStatus = isMortgaged ? ' <span class="mortgage-status">(已抵押)</span>' : '';
+            const levelStatus = level > 0 ? ` <span class="level-status">Lv.${level}</span>` : '';
+            
+            propertiesHtml += `
+                <div class="property-item ${isMortgaged ? 'mortgaged' : ''}">
+                    <span class="property-name">${property.name}${mortgageStatus}${levelStatus}</span>
+                    ${player.id === playerId ? `
+                        <div class="property-buttons">
+                            <button class="property-btn ${isMortgaged ? 'redeem-btn' : 'mortgage-btn'}" 
+                                    onclick="handlePropertyAction('${isMortgaged ? 'redeem' : 'mortgage'}', ${propertyId})">
+                                ${isMortgaged ? '赎回' : '抵押'}
+                            </button>
+                            ${!isMortgaged && level < 2 && hasCompletePropertyGroup(player.id, propertyId) ? `
+                                <button class="property-btn upgrade-btn" 
+                                        onclick="handlePropertyAction('upgrade', ${propertyId})">
+                                    升级
                                 </button>
-                                ${!isMortgaged && level < 2 && hasCompletePropertyGroup(player.id, propertyId) ? `
-                                    <button class="property-btn upgrade-btn" 
-                                            onclick="handlePropertyAction('upgrade', ${propertyId})">
-                                        升级
-                                    </button>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            propertiesHtml += '</div>';
-        } else {
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        propertiesHtml += '</div>';
+        
+        if (!hasProperties) {
             propertiesHtml = '<div class="no-properties">无</div>';
         }
         
@@ -416,18 +465,25 @@ function renderPropertyOwnership(players) {
     Object.values(players).forEach((player, index) => {
         const playerClass = `owned-by-player${(index % 4) + 1}`;
         
-        player.properties.forEach(propertyPosition => {
-            const tileElement = document.getElementById(`tile-${propertyPosition}`);
+        // 遍历所有地块，找到属于当前玩家的地产
+        for (let propertyPosition = 0; propertyPosition < GAME_MAP.length; propertyPosition++) {
             const property = GAME_MAP[propertyPosition];
+            
+            // 只处理地产类型的地块
+            if (property.type !== 'property') continue;
+            
+            // 检查该地产是否属于当前玩家
+            const tileState = gameState && gameState.tile_states ? gameState.tile_states[propertyPosition.toString()] : null;
+            if (!tileState || tileState.owner_id !== player.id) continue;
+            
+            const tileElement = document.getElementById(`tile-${propertyPosition}`);
             
             if (tileElement) {
                 // 添加所有权CSS类
                 tileElement.classList.add(playerClass);
                 
-                // 从gameState.tile_states获取抵押状态和等级
-                const tileState = gameState && gameState.tile_states ? gameState.tile_states[propertyPosition.toString()] : null;
-                const isMortgaged = tileState ? tileState.mortgaged : false;
-                const level = tileState ? tileState.level : 0;
+                const isMortgaged = tileState.mortgaged;
+                const level = tileState.level;
                 
                 // 检查是否被抵押
                 if (isMortgaged) {
@@ -456,7 +512,7 @@ function renderPropertyOwnership(players) {
                 
                 tileElement.appendChild(ownerLabel);
             }
-        });
+        }
     });
 }
 
@@ -487,6 +543,7 @@ function createDebtModal() {
     modal.className = 'debt-modal';
     modal.innerHTML = `
         <div class="debt-modal-content">
+            <button class="debt-modal-close" onclick="closeDebtModal()">&times;</button>
             <div class="debt-icon">⚠️</div>
             <h2>资金不足！</h2>
             <p>您的资金为负数，必须抵押地产来偿还债务！</p>
@@ -497,6 +554,14 @@ function createDebtModal() {
         </div>
     `;
     document.body.appendChild(modal);
+}
+
+// 关闭债务模式提示框
+function closeDebtModal() {
+    const debtModal = document.getElementById('debt-modal');
+    if (debtModal) {
+        debtModal.style.display = 'none';
+    }
 }
 
 // 更新按钮状态
@@ -522,11 +587,10 @@ function updateButtonStates(isMyTurn, isInDebtMode = false) {
 
 // 检查地产是否已被拥有
 function isPropertyOwned(position) {
-    if (!gameState) return false;
+    if (!gameState || !gameState.tile_states) return false;
     
-    return Object.values(gameState.players).some(player => 
-        player.properties.includes(position)
-    );
+    const tileState = gameState.tile_states[position.toString()];
+    return tileState && tileState.owner_id !== '';
 }
 
 // 检查玩家是否拥有指定地产所属颜色组的全部地产
@@ -600,6 +664,11 @@ function checkForCardMessage(logs) {
     
     for (let log of recentLogs) {
         if (log.includes('抽到卡片：')) {
+            // 检查是否已经显示过这条日志
+            if (lastShownCardLog === log) {
+                continue;
+            }
+            
             const cardText = log.split('抽到卡片：')[1];
             let cardType = '卡片';
             
@@ -614,6 +683,8 @@ function checkForCardMessage(logs) {
                 cardType = '命运卡';
             }
             
+            // 记录已显示的卡片日志
+            lastShownCardLog = log;
             showCardModal(cardType, cardText);
             break;
         }
